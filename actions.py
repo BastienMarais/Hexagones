@@ -68,28 +68,26 @@ def parcoursEnLargeur(modele):
     affiche les prédécesseurs par des flèches grises et le chemin jusqu'à
     l'objectif en rouge"""
 
-   pass
+    print "Parcours en largeur ON"
 
 
 def parcoursEnProfondeur(modele):
     """effectue un parcours en profondeur du sommet de depart 
     affiche les prédécesseurs par des flèches grises et le chemin jusqu'à
     l'objectif en rouge"""
-    pass
-
     
-def parcoursEnLargeur(modele):
-   pass
+    print "Parcours en profondeur ON"
+
 
 
 def bellmanFord(modele):
-   pass
+    print "Algo de Bellman Ford ON"
 
 
 def dijkstra(modele): 
-    pass
+    "Algo Dijkstra ON"
 
 
 def astar(modele): 
-    pass
+    print "Algo A* ON"
 
