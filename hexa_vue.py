@@ -40,7 +40,7 @@ class MainWindow(tk.Frame):
         self.grille.grid(row=0,column=1, sticky = 'E')
         self.focus_set()
         menubar = tk.Menu(self.parent)
-        self.labels = ["Effacer Tout", "Effacer Resultats", "Aleatoire","Parcours en profondeur", "Parcours en largeur", "Bellman-Ford", "Dijskstra", "A*"]
+        self.labels = ["Effacer Tout", "Effacer Resultats", "Aleatoire","Parcours en profondeur", "Parcours en largeur", "Composantes connexes", "Bellman-Ford", "Dijskstra", "A*"]
 
         for lab in self.labels:
             menubar.add_command(label = lab, command = (lambda lab = lab:self.action(lab)))

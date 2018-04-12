@@ -33,6 +33,9 @@ class Controleur():
 
         if label == "A*":
             astar(self.model)
+            
+        if label == "Composantes connexes" :
+            composantesConnexes(self.model)
 
 
     def onLClick(self, hexCoord):

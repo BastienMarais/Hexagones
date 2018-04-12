@@ -58,17 +58,79 @@
 
 
 from hexa_modele import *
+from collections import deque
 import random
 import time
 import priorite
 
+def tracerChemin(modele,pred):
+    """trace le plus court chemin"""
+    courant = modele.getObjectif()
+    while courant in pred :
+        precedent = pred[courant]
+        modele.addFleche(precedent,courant, "Red")
+        courant = precedent
+            
+    modele.observateur.update()
+    
 
 def parcoursEnLargeur(modele):
     """effectue un parcours en largeur du sommet de depart 
     affiche les prédécesseurs par des flèches grises et le chemin jusqu'à
     l'objectif en rouge"""
-
+    
     print "Parcours en largeur ON"
+    distance = {}
+    distance[modele.getDepart()] = 0
+
+    pred = {}
+    attente = deque()
+    attente.append(modele.getDepart())
+
+    while attente:
+        courant = attente.popleft()
+        liste_vois = modele.getVoisins(courant)
+        random.shuffle(liste_vois)
+        
+        for voisin in liste_vois:
+            if not voisin in distance: # encore inconnu
+                distance[voisin] = distance[courant] + 1
+                pred[voisin] = courant
+                attente.append(voisin)
+                
+                # méthodes graphiques
+                modele.addFleche(courant,voisin,"Gray")
+                modele.addTexte(voisin,distance[voisin])
+                modele.observateur.update()
+                
+        # on trace en rouge 
+        tracerChemin(modele,pred)
+            
+    
+def composantesConnexes(modele):
+    """Trouve les composantes connexes"""
+    num_composantes = {}
+    liste_sommets = modele.getListeSommets()
+    compteur_comp = 0
+    
+    for x in liste_sommets :
+        # si x n'a pas de numéro, lancer un parcours...
+        if not x in num_composantes :
+            attente = deque([x])
+            num_composantes[x] = compteur_comp
+            modele.addTexte(x,compteur_comp)
+            while attente:
+                courant = attente.pop()
+                for vois in modele.getVoisins(courant):
+                    if not vois in num_composantes:
+                        attente.append(vois)
+                        num_composantes[vois] = compteur_comp
+                        modele.addTexte(voisin,compteur_comp)
+   
+        compteur_comp += 1
+        modele.observateur.update()
+    
+    
 
 
 def parcoursEnProfondeur(modele):
@@ -77,7 +139,24 @@ def parcoursEnProfondeur(modele):
     l'objectif en rouge"""
     
     print "Parcours en profondeur ON"
-
+    
+    pred = {}
+    connu = deque()
+    for x in modele.getListeSommets() :
+        if not connu[x] :
+            PP_etape(x,connu,pred)
+    
+def PP_etape(x,connu,pred):
+    connu[x] = True
+    for v in model.getVoisins(x):
+        if not connu[v] :
+            pred[v] = x 
+            # méthodes graphiques
+            modele.addFleche(x,v,"Gray")
+            modele.observateur.update()
+            
+            PP_etape(v, connu,pred)
+        
 
 
 def bellmanFord(modele):
@@ -85,7 +164,7 @@ def bellmanFord(modele):
 
 
 def dijkstra(modele): 
-    "Algo Dijkstra ON"
+    print "Algo Dijkstra ON"
 
 
 def astar(modele): 
