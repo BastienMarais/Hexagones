@@ -83,7 +83,7 @@ def tracerChemin(modele,pred):
             
     modele.observateur.update()
 
-def relacher_arc(modele,dist,pred,fleches,v1,v2):
+def relacher_arc(modele,dist,pred,fleches,texte,v1,v2):
     """ Relache l'arc (v1,v2) et indique s'il y changement ou non """
     
     if dist[v1] + modele.longueur(v1,v2) < dist[v2] :
@@ -91,7 +91,9 @@ def relacher_arc(modele,dist,pred,fleches,v1,v2):
         pred[v2] = v1
         if v2 in fleches :
             modele.delFleche(fleches[v2])
-        fleches[v2] = modele.addFleche(v1,v2,"Black")
+            modele.deltexte(texte[v2])
+        fleches[v2] = modele.addFleche(v1,v2,"Gray")
+        texte[v2] = modele.addTexte(v2,dist[v2])
         modele.observateur.update()
         return True 
     return False 
@@ -222,6 +224,7 @@ def bellmanFord(modele):
     
     # intialisation
     fleches = {}
+    texte = {}
     n = len(modele.getListeSommets())
     dist = {}
     
@@ -237,7 +240,7 @@ def bellmanFord(modele):
         # relache chaque sommet
         for v1 in modele.getListeSommets():
             for v2 in modele.getVoisins(v1):
-                if relacher_arc(modele,dist,pred,fleches,v1,v2):
+                if relacher_arc(modele,dist,pred,fleches,texte,v1,v2):
                     changement = True
         if changement == False :
             tracerChemin(modele,pred)
