@@ -31,7 +31,7 @@ class Controleur():
         if label == "Aleatoire":
             self.model.random()
 
-        if label == "A*":
+        if label == "A star":
             astar(self.model)
             
         if label == "Composantes connexes" :

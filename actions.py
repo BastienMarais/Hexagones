@@ -73,7 +73,8 @@ sys.setrecursionlimit(666666) # augmente la pile
 """
 
 def tracerChemin(modele,pred):
-    """trace le plus court chemin"""
+    """ trace le plus court chemin """
+    
     courant = modele.getObjectif()
     while courant in pred :
         precedent = pred[courant]
@@ -82,13 +83,19 @@ def tracerChemin(modele,pred):
             
     modele.observateur.update()
 
-def relacher(modele,v1,v2,distance,pred):
-    """mets a jour les valeurs"""
-    if (distance[v1] + modele.longueur(v1,v2)) < distance[v2]:
-        distance[v2] = distance[v1] + modele.longueur(v1,v2)
-        modele.addFleche(v1,v2,"Grey")
-        modele.addTexte(v2,distance[v2])
+def relacher_arc(modele,dist,pred,fleches,v1,v2):
+    """ Relache l'arc (v1,v2) et indique s'il y changement ou non """
+    
+    if dist[v1] + modele.longueur(v1,v2) < dist[v2] :
+        dist[v2] = dist[v1] + modele.longueur(v1,v2)
         pred[v2] = v1
+        if v2 in fleches :
+            modele.delFleche(fleches[v2])
+        fleches[v2] = modele.addFleche(v1,v2,"Black")
+        modele.observateur.update()
+        return True 
+    return False 
+    
         
     
 """
@@ -96,8 +103,10 @@ def relacher(modele,v1,v2,distance,pred):
 #         Recherche de composantes connexes                 #
 #############################################################
 """
+
 def composantesConnexes(modele):
-    """Trouve les composantes connexes"""
+    """ Trouve les composantes connexes """
+    
     num_composantes = {}
     liste_sommets = modele.getListeSommets()
     compteur_comp = 1
@@ -125,10 +134,11 @@ def composantesConnexes(modele):
 #                  Parcours en largeur                      #
 #############################################################
 """
+
 def parcoursEnLargeur(modele):
-    """effectue un parcours en largeur du sommet de depart 
+    """ effectue un parcours en largeur du sommet de depart 
     affiche les prédécesseurs par des flèches grises et le chemin jusqu'à
-    l'objectif en rouge"""
+    l'objectif en rouge """
     
     print "Parcours en largeur ON"
     distance = {}
@@ -166,10 +176,11 @@ def parcoursEnLargeur(modele):
 #                  Parcours en profondeur                   #
 #############################################################
 """
+
 def parcoursEnProfondeur(modele):
-    """effectue un parcours en profondeur du sommet de depart 
+    """ effectue un parcours en profondeur du sommet de depart 
     affiche les prédécesseurs par des flèches grises et le chemin jusqu'à
-    l'objectif en rouge"""
+    l'objectif en rouge """
     
     print "Parcours en profondeur ON"
     
@@ -202,17 +213,36 @@ def PP_etape(modele, x,connu,pred):
 #              Parcours de Bellman-Ford                     #
 #############################################################
 """
+
 def bellmanFord(modele):
-    print "Algo de Bellman Ford ON"
-    distance = {}
-    distance[modele.getDepart()] = 0
+    """ Algo de Bellman-Ford , utile si graphe valué, dans le cas d'absence 
+    de circuit  """
+    
+    print "Parcours Bellman-Ford ON"
+    
+    # intialisation
+    fleches = {}
+    n = len(modele.getListeSommets())
+    dist = {}
+    
+    for v in modele.getListeSommets():
+        dist[v] = float("inf")
+        
+    dist[modele.getDepart()] = 0
     
     pred = {}
     
-    for courant in modele.getListeSommets():
-        for voisin in modele.getVoisins(courant) :
-            relacher(modele,courant,voisin,distance,pred)
-            
+    for i in range(n-1):
+        changement = False 
+        # relache chaque sommet
+        for v1 in modele.getListeSommets():
+            for v2 in modele.getVoisins(v1):
+                if relacher_arc(modele,dist,pred,fleches,v1,v2):
+                    changement = True
+        if changement == False :
+            tracerChemin(modele,pred)
+            return
+               
     
 
 
@@ -221,6 +251,7 @@ def bellmanFord(modele):
 #                Parcours de Dijkstra                       #
 #############################################################
 """
+
 def dijkstra(modele): 
     print "Algo Dijkstra ON"
 
